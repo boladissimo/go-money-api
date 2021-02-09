@@ -12,13 +12,18 @@ type StockController interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
 }
 
-//StockControllerImpl is the main implementation of StockController
-type StockControllerImpl struct {
+//NewStockController return a new stock controller stance //TODO: make it singleton
+func NewStockController(stockRepository repository.StockRepository) StockController {
+	return stockController{stockRepository}
+}
+
+//stockController is the main implementation of StockController
+type stockController struct {
 	Repo repository.StockRepository
 }
 
 //GetAll return all stocks
-func (c StockControllerImpl) GetAll(w http.ResponseWriter, r *http.Request) {
+func (c stockController) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(c.Repo.GetAll())
 }

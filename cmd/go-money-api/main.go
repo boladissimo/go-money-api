@@ -13,7 +13,7 @@ import (
 func main() {
 	util.LogInfo("Starting go-money-api")
 
-	stockController := controller.StockControllerImpl{Repo: repository.StockRepositoryImpl{}}
+	stockController := controller.NewStockController(repository.StockRepositoryImpl{})
 	http.Handle("/", interfaces.GetRouter(stockController))
 
 	util.LogInfo("Serving at 8085")

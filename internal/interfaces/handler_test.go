@@ -13,7 +13,7 @@ func TestHealthCheck(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody := "ok"
 
-	stockController := controller.StockControllerImpl{Repo: repository.StockRepositoryImpl{}}
+	stockController := controller.NewStockController(repository.StockRepositoryImpl{})
 	router := GetRouter(stockController)
 
 	responseRecord := httptest.NewRecorder()

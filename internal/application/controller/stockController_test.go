@@ -24,7 +24,7 @@ func TestGetAll(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody, _ := json.Marshal(stockList)
 
-	stockController := StockControllerImpl{Repo: StockRepositoryMock{}}
+	stockController := NewStockController(StockRepositoryMock{})
 
 	responseRecord := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/stock", nil)
