@@ -5,15 +5,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/boladissimo/go-money-api/internal/application/controller"
-	"github.com/boladissimo/go-money-api/internal/infrastructure/repository"
+	"github.com/boladissimo/go-money-api/internal/stocks"
 )
 
 func TestHealthCheck(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody := "ok"
 
-	stockController := controller.NewStockController(repository.StockRepositoryImpl{})
+	stockController := stocks.NewController(stocks.NewRepository())
 	router := GetRouter(stockController)
 
 	responseRecord := httptest.NewRecorder()

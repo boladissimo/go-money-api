@@ -4,16 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/boladissimo/go-money-api/internal/application/controller"
-	"github.com/boladissimo/go-money-api/internal/infrastructure/repository"
 	"github.com/boladissimo/go-money-api/internal/infrastructure/util"
 	"github.com/boladissimo/go-money-api/internal/interfaces"
+	"github.com/boladissimo/go-money-api/internal/stocks"
 )
 
 func main() {
 	util.LogInfo("Starting go-money-api")
 
-	stockController := controller.NewStockController(repository.StockRepositoryImpl{})
+	stockController := stocks.NewController(stocks.NewRepository())
 	http.Handle("/", interfaces.GetRouter(stockController))
 
 	util.LogInfo("Serving at 8085")

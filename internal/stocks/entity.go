@@ -1,4 +1,4 @@
-package stock
+package stocks
 
 //Entity is the entity of the stock domain
 type Entity struct {
