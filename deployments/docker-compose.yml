@@ -1,8 +1,24 @@
 version: '3.3'
 services:
+  api:
+    container_name: go-money-api
+    build: 
+      context: ../
+      dockerfile: deployments/Dockerfile
+    environment: 
+      - DATABASE_URL=postgres://money:pass123@db:3306/money
+    ports:
+      - 8085:8085
+    networks:
+      - development-network
+    depends_on:
+      - db
 
   db:
+    container_name: go-money-db
     image: mysql:8.0.21
+    volumes:
+      - ./volume:/var/lib/mysql
     ports:
       - 3306:3306
     environment:
@@ -14,6 +30,7 @@ services:
       - development-network
 
   db-ui:
+    container_name: go-money-db-ui
     image: adminer:4.8.0
     restart: always
     links:
@@ -28,6 +45,7 @@ services:
       - development-network
       
   redis:
+    container_name: go-money-redis
     image: 'bitnami/redis:6.0'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

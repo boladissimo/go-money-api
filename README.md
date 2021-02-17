@@ -23,4 +23,4 @@ with coverage
 ### coverage view
 
     go test -coverprofile=coverage.out ./...
-    o tool cover -html=coverage.out
+    go tool cover -html=coverage.out
