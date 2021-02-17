@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/boladissimo/go-money-api/internal/infrastructure/config/db"
 	"github.com/boladissimo/go-money-api/internal/infrastructure/util"
@@ -18,6 +19,7 @@ func main() {
 	stockController := stocks.NewController(stockService)
 	http.Handle("/", interfaces.GetRouter(stockController))
 
-	util.LogInfo("Serving at 8085")
-	log.Fatal(http.ListenAndServe(":8085", nil))
+	port := os.Getenv("PORT")
+	util.LogInfo("Serving at " + port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

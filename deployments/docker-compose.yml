@@ -7,8 +7,9 @@ services:
       dockerfile: deployments/Dockerfile
     environment: 
       - DATABASE_URL=postgres://money:pass123@db:3306/money
+      - PORT=8084
     ports:
-      - 8085:8085
+      - 8084:8084
     networks:
       - development-network
     depends_on:
