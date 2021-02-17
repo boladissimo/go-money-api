@@ -4,16 +4,18 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/boladissimo/go-money-api/internal/stocks"
 )
+
+type StockControllerMock struct{}
+
+func (s StockControllerMock) GetAll(w http.ResponseWriter, r *http.Request) {}
+func (s StockControllerMock) Create(w http.ResponseWriter, r *http.Request) {}
 
 func TestHealthCheck(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody := "ok"
 
-	stockController := stocks.NewController(stocks.NewRepository())
-	router := GetRouter(stockController)
+	router := GetRouter(StockControllerMock{})
 
 	responseRecord := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)

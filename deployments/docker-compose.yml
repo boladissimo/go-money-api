@@ -2,27 +2,26 @@ version: '3.3'
 services:
 
   db:
-    image: postgres:11.2
+    image: mysql:8.0.21
     ports:
-      - 5432:5432
-    volumes:
-      - ./volume:/var/lib/postgresql
+      - 3306:3306
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin123
-      - POSTGRES_DB=go-money-api
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: money
+      MYSQL_USER: money
+      MYSQL_PASSWORD: pass123
     networks:
       - development-network
 
   db-ui:
-    image: dpage/pgadmin4
+    image: adminer:4.8.0
+    restart: always
     links:
       - db:db
     ports:
-      - 81:80
+      - 81:8080
     environment:
-      PGADMIN_DEFAULT_EMAIL: "boladissimo.dev@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin123"
+      MYSQL_ROOT_PASSWORD: root
     depends_on:
       - db
     networks:
