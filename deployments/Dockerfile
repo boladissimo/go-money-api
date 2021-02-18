@@ -14,5 +14,6 @@ RUN go build -o go-money-api ./cmd/go-money-api/main.go
 FROM alpine:3.13.1
 
 COPY --from=build /go/src/app/go-money-api .
+COPY --from=build /go/src/app/scripts scripts
 
 ENTRYPOINT [ "./go-money-api" ]

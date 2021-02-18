@@ -14,6 +14,8 @@ import (
 func main() {
 	util.LogInfo("Starting go-money-api")
 
+	db.RunMigrations()
+
 	stockRepository := stocks.NewRepository(db.GetDB())
 	stockService := stocks.NewService(stockRepository)
 	stockController := stocks.NewController(stockService)
