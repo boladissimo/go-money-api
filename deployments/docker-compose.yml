@@ -6,7 +6,7 @@ services:
       context: ../
       dockerfile: deployments/Dockerfile
     environment: 
-      - DATABASE_URL=postgres://money:pass123@db:3306/money
+      - CLEARDB_DATABASE_URL=mysql://money:pass123@db:3306/money
       - PORT=8084
     ports:
       - 8084:8084

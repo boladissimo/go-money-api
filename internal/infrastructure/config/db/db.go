@@ -34,13 +34,12 @@ func GetDB() *sql.DB {
 	return db
 }
 
-//getDBParameterFromEnv return the database connection parameters from the env DATABASE_URL
+//getDBParameterFromEnv return the database connection parameters from the env CLEARDB_DATABASE_URL
 //it needs to be in the format user@password.host:port/dbname and the port needs to be made of 4 digits
 func getDBParameterFromEnv() (host, user, password, dbname, port string) {
-	databaseURL := os.Getenv("DATABASE_URL")
+	databaseURL := os.Getenv("CLEARDB_DATABASE_URL")
 	if databaseURL == "" {
-		databaseURL = "postgres://money:pass123@localhost:3306/money"
-		// panic("invalid env DATABASE_URL")
+		panic("invalid env CLEARDB_DATABASE_URL")
 	}
 
 	url, err := url.Parse(databaseURL)
