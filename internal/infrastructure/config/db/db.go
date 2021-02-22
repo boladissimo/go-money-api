@@ -21,8 +21,8 @@ var migrationsPath = os.Getenv("MIGRATIONS_PATH")
 func GetDB() *sql.DB {
 	if db == nil {
 		once.Do(func() {
-			host, user, password, dbname, port := getDBParameterFromEnv()
-			dbConnection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, dbname)
+			host, user, password, dbname := getDBParameterFromEnv()
+			dbConnection := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, host, dbname)
 			util.LogInfo(dbConnection)
 			sqlDB, err := sql.Open("mysql", dbConnection)
 			if err != nil {
@@ -36,7 +36,7 @@ func GetDB() *sql.DB {
 
 //getDBParameterFromEnv return the database connection parameters from the env CLEARDB_DATABASE_URL
 //it needs to be in the format user@password.host:port/dbname and the port needs to be made of 4 digits
-func getDBParameterFromEnv() (host, user, password, dbname, port string) {
+func getDBParameterFromEnv() (host, user, password, dbname string) {
 	databaseURL := os.Getenv("CLEARDB_DATABASE_URL")
 	if databaseURL == "" {
 		panic("invalid env CLEARDB_DATABASE_URL")
@@ -48,18 +48,17 @@ func getDBParameterFromEnv() (host, user, password, dbname, port string) {
 		panic(err)
 	}
 
-	host = url.Host[0 : len(url.Host)-5]
+	host = url.Host
 	user = url.User.Username()
 	password, _ = url.User.Password()
 	dbname = url.Path[1:len(url.Path)]
-	port = url.Host[len(url.Host)-4 : len(url.Host)]
 
 	return
 }
 
 //RunMigrations scans the /scripts/migrations folder to check what tables does it needs migrate
 func RunMigrations() {
-	_, _, _, dbname, _ := getDBParameterFromEnv()
+	_, _, _, dbname := getDBParameterFromEnv()
 	tables := getTableNames()
 	for _, table := range tables {
 		if !tableExists(dbname, table) {
