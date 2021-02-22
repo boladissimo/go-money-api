@@ -15,7 +15,7 @@ import (
 
 var once sync.Once
 var db *sql.DB
-var migrationsPath = "/scripts/migrations/"
+var migrationsPath = os.Getenv("MIGRATIONS_PATH")
 
 //GetDB return the sql.DB instance as a singleton
 func GetDB() *sql.DB {

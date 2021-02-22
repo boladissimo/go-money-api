@@ -7,6 +7,7 @@ services:
       dockerfile: deployments/Dockerfile
     environment: 
       - CLEARDB_DATABASE_URL=mysql://money:pass123@db:3306/money
+      - MIGRATIONS_PATH=/scripts/migrations/
       - PORT=8084
     ports:
       - 8084:8084
