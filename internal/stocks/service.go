@@ -4,6 +4,7 @@ package stocks
 type Service interface {
 	GetAll() []Entity
 	Create(dto DTO) Entity
+	Delete(id int64) (int64, error)
 }
 
 type service struct {
@@ -22,4 +23,8 @@ func (s service) GetAll() []Entity {
 func (s service) Create(dto DTO) Entity {
 	id := s.repository.Create(dto)
 	return Entity{ID: id, Code: dto.Code, FantasyName: dto.FantasyName}
+}
+
+func (s service) Delete(id int64) (int64, error) {
+	return s.repository.Delete(id)
 }

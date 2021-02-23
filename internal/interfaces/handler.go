@@ -19,6 +19,7 @@ func GetRouter(stockController stocks.Controller) *mux.Router {
 
 	r.HandleFunc("/stock", stockController.GetAll).Methods(http.MethodGet)
 	r.HandleFunc("/stock", stockController.Create).Methods(http.MethodPost)
+	r.HandleFunc("/stock/{id:[0-9]+}", stockController.Delete).Methods(http.MethodDelete)
 	return r
 }
 

@@ -10,6 +10,7 @@ type StockControllerMock struct{}
 
 func (s StockControllerMock) GetAll(w http.ResponseWriter, r *http.Request) {}
 func (s StockControllerMock) Create(w http.ResponseWriter, r *http.Request) {}
+func (s StockControllerMock) Delete(w http.ResponseWriter, r *http.Request) {}
 
 func TestHealthCheck(t *testing.T) {
 	expectedStatusCode := http.StatusOK

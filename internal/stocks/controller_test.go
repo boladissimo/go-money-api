@@ -23,6 +23,11 @@ func (r ServiceMock) Create(dto DTO) (entity Entity) {
 	entity = stockEntity
 	return
 }
+
+func (r ServiceMock) Delete(id int64) (int64, error) {
+	return 1, nil
+}
+
 func TestGetAll(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody, _ := json.Marshal(stockList)
