@@ -16,15 +16,19 @@ func NewService(repository Repository) Service {
 	return service{repository: repository}
 }
 
+
+//GetAll return all stocks
 func (s service) GetAll() []Entity {
 	return s.repository.GetAll()
 }
 
+//Create create an stock and return its entity
 func (s service) Create(dto DTO) Entity {
 	id := s.repository.Create(dto)
 	return Entity{ID: id, Code: dto.Code, FantasyName: dto.FantasyName}
 }
 
+//Delete revomes given stock by id and return the number of rows affected
 func (s service) Delete(id int64) (int64, error) {
 	return s.repository.Delete(id)
 }

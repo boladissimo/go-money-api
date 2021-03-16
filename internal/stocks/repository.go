@@ -62,7 +62,7 @@ func (r repository) Create(dto DTO) (id int64) {
 	return
 }
 
-//Delete removes a stock
+//Delete removes a stock and return the number of rows affected
 func (r repository) Delete(id int64) (rowsNumber int64, err error) {
 	stmt, err := r.db.Prepare("DELETE FROM stock WHERE id = ?")
 	if err != nil {
