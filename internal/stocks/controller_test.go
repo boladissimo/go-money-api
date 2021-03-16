@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/boladissimo/go-money-api/internal/infrastructure/util"
 	"github.com/boladissimo/go-money-api/internal/interfaces"
 	"github.com/boladissimo/go-money-api/internal/stocks"
 )
@@ -29,7 +28,6 @@ func (r ServiceMock) Create(dto stocks.DTO) (entity stocks.Entity) {
 }
 
 func (r ServiceMock) Delete(id int64) (int64, error) {
-	util.LogInfo("given id is ", id)
 	return id, nil
 }
 
