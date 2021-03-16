@@ -1,9 +1,11 @@
-package interfaces
+package interfaces_test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/boladissimo/go-money-api/internal/interfaces"
 )
 
 type StockControllerMock struct{}
@@ -16,7 +18,7 @@ func TestHealthCheck(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBody := "ok"
 
-	router := GetRouter(StockControllerMock{})
+	router := interfaces.GetRouter(StockControllerMock{})
 
 	responseRecord := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
