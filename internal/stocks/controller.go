@@ -13,6 +13,7 @@ import (
 //Controller is an interface to handle the http request to the stock domain
 type Controller interface {
 	GetAll(w http.ResponseWriter, r *http.Request)
+	GetById(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
 }
@@ -25,6 +26,21 @@ func NewController(service Service) Controller {
 //controller is the main implementation of StockController
 type controller struct {
 	service Service
+}
+
+//GetById return stock entity by given id
+func (c controller) GetById(w http.ResponseWriter, r *http.Request) {
+	id := getMuxVarId(r)
+	entity, err := c.service.GetById(id)
+
+	if err != nil {
+		util.LogError(err)
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "not found")
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(entity)
+	}
 }
 
 //GetAll return all stocks
@@ -46,8 +62,7 @@ func (c controller) Create(w http.ResponseWriter, r *http.Request) {
 
 //Delete delete a stock given the id
 func (c controller) Delete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.ParseInt(vars["id"], 10, 64)
+	id := getMuxVarId(r)
 	rowsAffected, err := c.service.Delete(id)
 
 	if err != nil {
@@ -60,4 +75,10 @@ func (c controller) Delete(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusNoContent)
 	}
+}
+
+func getMuxVarId(r *http.Request) int64 {
+	vars := mux.Vars(r)
+	id, _ := strconv.ParseInt(vars["id"], 10, 64)
+	return id
 }

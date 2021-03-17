@@ -3,6 +3,7 @@ package stocks
 //Service orchestrate the interaction between objects to make the request sucefully.
 type Service interface {
 	GetAll() []Entity
+	GetById(id int64) (Entity, error)
 	Create(dto DTO) Entity
 	Delete(id int64) (int64, error)
 }
@@ -15,7 +16,6 @@ type service struct {
 func NewService(repository Repository) Service {
 	return service{repository: repository}
 }
-
 
 //GetAll return all stocks
 func (s service) GetAll() []Entity {
@@ -31,4 +31,8 @@ func (s service) Create(dto DTO) Entity {
 //Delete revomes given stock by id and return the number of rows affected
 func (s service) Delete(id int64) (int64, error) {
 	return s.repository.Delete(id)
+}
+
+func (s service) GetById(id int64) (Entity, error) {
+	return s.repository.GetById(id)
 }

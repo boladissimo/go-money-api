@@ -3,6 +3,7 @@ package stocks_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,6 +21,15 @@ type ServiceMock struct{}
 //GetAll return all stocks
 func (r ServiceMock) GetAll() []stocks.Entity {
 	return stockList
+}
+
+func (r ServiceMock) GetById(id int64) (entity stocks.Entity, err error) {
+	if id == 1 {
+		entity = stockEntity
+	} else {
+		err = errors.New("error")
+	}
+	return
 }
 
 func (r ServiceMock) Create(dto stocks.DTO) (entity stocks.Entity) {
@@ -104,6 +114,49 @@ func TestDelete_invalidStockId_404AndNotFoundMessage(t *testing.T) {
 
 	responseRecord := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodDelete, "/stock/2", nil)
+
+	router.ServeHTTP(responseRecord, req)
+
+	if expectedStatusCode != responseRecord.Code {
+		t.Errorf("Expected reponse code %d. Got %d", expectedStatusCode, responseRecord.Code)
+	}
+
+	if string(expectedResponseBody) != responseRecord.Body.String() {
+		t.Errorf("Expected body with %s. Got %s", string(expectedResponseBody), responseRecord.Body.String())
+	}
+}
+
+func TestGetById_validStockId_200AndStockEntity(t *testing.T) {
+	expectedStatusCode := http.StatusOK
+	expectedResponseBodyBytes, _ := json.Marshal(stockEntity)
+	expectedResponseBody := string(expectedResponseBodyBytes) + "\n"
+
+	stockController := stocks.NewController(ServiceMock{})
+	router := interfaces.GetRouter(stockController)
+
+	responseRecord := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/stock/1", nil)
+
+	router.ServeHTTP(responseRecord, req)
+
+	if expectedStatusCode != responseRecord.Code {
+		t.Errorf("Expected reponse code %d. Got %d", expectedStatusCode, responseRecord.Code)
+	}
+
+	if string(expectedResponseBody) != responseRecord.Body.String() {
+		t.Errorf("Expected body with %s. Got %s", string(expectedResponseBody), responseRecord.Body.String())
+	}
+}
+
+func TestGetById_invalidStockId_404AndNotFoundMessage(t *testing.T) {
+	expectedStatusCode := http.StatusNotFound
+	expectedResponseBody := []byte("not found")
+
+	stockController := stocks.NewController(ServiceMock{})
+	router := interfaces.GetRouter(stockController)
+
+	responseRecord := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/stock/2", nil)
 
 	router.ServeHTTP(responseRecord, req)
 

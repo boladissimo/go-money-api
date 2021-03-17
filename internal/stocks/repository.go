@@ -8,8 +8,13 @@ import (
 
 //Repository is an interface to interect with the Stock database
 type Repository interface {
+	//GetAll return all stocks
 	GetAll() []Entity
+	//GetById return a stock that matches given id, if there is no match, a non null error will be returned
+	GetById(id int64) (Entity, error)
+	//Create inserts a stock and returns its database id
 	Create(dto DTO) int64
+	//Delete removes a stock that matches given id and return the number of rows affected, if there is no match, a non null error will be returned
 	Delete(id int64) (int64, error)
 }
 
@@ -23,7 +28,6 @@ func NewRepository(db *sql.DB) Repository {
 	return repository{db}
 }
 
-//GetAll return all stocks
 func (r repository) GetAll() []Entity {
 	rows, err := r.db.Query("SELECT * FROM stock")
 	if err != nil {
@@ -46,7 +50,6 @@ func (r repository) GetAll() []Entity {
 	return stocks
 }
 
-//Create inserts a stock
 func (r repository) Create(dto DTO) (id int64) {
 	stmt, err := r.db.Prepare("INSERT INTO stock (code, fantasty_name) VALUES (?, ?)")
 	if err != nil {
@@ -62,7 +65,6 @@ func (r repository) Create(dto DTO) (id int64) {
 	return
 }
 
-//Delete removes a stock and return the number of rows affected
 func (r repository) Delete(id int64) (rowsNumber int64, err error) {
 	stmt, err := r.db.Prepare("DELETE FROM stock WHERE id = ?")
 	if err != nil {
@@ -77,4 +79,16 @@ func (r repository) Delete(id int64) (rowsNumber int64, err error) {
 	rowsNumber, err = result.RowsAffected()
 
 	return rowsNumber, err
+}
+
+func (r repository) GetById(id int64) (entity Entity, err error) {
+	stmt := r.db.QueryRow("SELECT FROM stock WHERE id = ?", id)
+
+	err = stmt.Scan(&entity)
+
+	if err != nil {
+		util.LogError(err)
+	}
+
+	return
 }
