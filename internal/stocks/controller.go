@@ -33,7 +33,7 @@ func (c controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(c.service.GetAll())
 }
 
-//GetAll return all stocks
+//Create create given stock and returns its entity as json
 func (c controller) Create(w http.ResponseWriter, r *http.Request) {
 	var dto DTO
 	err := json.NewDecoder(r.Body).Decode(&dto)
