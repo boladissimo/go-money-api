@@ -16,6 +16,8 @@ type Repository interface {
 	Create(dto DTO) int64
 	//Delete removes a stock that matches given id and return the number of rows affected, if there is no match, a non null error will be returned
 	Delete(id int64) (int64, error)
+	//Replace replaces the values from the stock given id and return the number of rows affected, if there is no match, a non null error will be returned
+	Replace(entity Entity) (int64, error)
 }
 
 //repository is the main implementation of StockRepository
@@ -82,13 +84,26 @@ func (r repository) Delete(id int64) (rowsNumber int64, err error) {
 }
 
 func (r repository) GetById(id int64) (entity Entity, err error) {
-	stmt := r.db.QueryRow("SELECT FROM stock WHERE id = ?", id)
+	stmt := r.db.QueryRow("SELECT id, code, fantasty_name FROM stock WHERE id = ?", id)
 
-	err = stmt.Scan(&entity)
+	err = stmt.Scan(&entity.ID, &entity.Code, &entity.FantasyName)
 
 	if err != nil {
 		util.LogError(err)
 	}
+
+	return
+}
+
+func (r repository) Replace(entity Entity) (rowsNumber int64, err error) {
+	stmt, err := r.db.Prepare("UPDATE stock SET code=?, fantasty_name=? WHERE id = ?")
+	if err != nil {
+		util.LogError(err)
+	}
+
+	result, err := stmt.Exec(entity.Code, entity.FantasyName, entity.ID)
+
+	rowsNumber, err = result.RowsAffected()
 
 	return
 }

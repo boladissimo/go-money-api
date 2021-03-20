@@ -21,6 +21,7 @@ func GetRouter(stockController stocks.Controller) *mux.Router {
 	r.HandleFunc("/stock", stockController.Create).Methods(http.MethodPost)
 	r.HandleFunc("/stock/{id:[0-9]+}", stockController.GetById).Methods(http.MethodGet)
 	r.HandleFunc("/stock/{id:[0-9]+}", stockController.Delete).Methods(http.MethodDelete)
+	r.HandleFunc("/stock/{id:[0-9]+}", stockController.Replace).Methods(http.MethodPut)
 	return r
 }
 

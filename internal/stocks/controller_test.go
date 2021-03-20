@@ -41,6 +41,14 @@ func (r ServiceMock) Delete(id int64) (int64, error) {
 	return id, nil
 }
 
+func (r ServiceMock) Replace(id int64, dto stocks.DTO) (entity stocks.Entity, err error) {
+	if id != 1 {
+		err = errors.New("Some error")
+	}
+	entity = stocks.Entity{ID: id, Code: dto.Code, FantasyName: dto.FantasyName}
+	return
+}
+
 func TestGetAll_stocksPresent_200AndStockList(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedResponseBodyBytes, _ := json.Marshal(stockList)
@@ -157,6 +165,55 @@ func TestGetById_invalidStockId_404AndNotFoundMessage(t *testing.T) {
 
 	responseRecord := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/stock/2", nil)
+
+	router.ServeHTTP(responseRecord, req)
+
+	if expectedStatusCode != responseRecord.Code {
+		t.Errorf("Expected reponse code %d. Got %d", expectedStatusCode, responseRecord.Code)
+	}
+
+	if string(expectedResponseBody) != responseRecord.Body.String() {
+		t.Errorf("Expected body with %s. Got %s", string(expectedResponseBody), responseRecord.Body.String())
+	}
+}
+
+func TestReplaceById_validStockId_200AndUpdatedStockEntity(t *testing.T) {
+	expectedStatusCode := http.StatusOK
+	expectedStock := stocks.Entity{ID: 1, Code: "biru", FantasyName: "liru"}
+	expectedResponseBodyBytes, _ := json.Marshal(expectedStock)
+	expectedResponseBody := string(expectedResponseBodyBytes) + "\n"
+
+	requestBody, _ := json.Marshal(stocks.DTO{Code: expectedStock.Code, FantasyName: expectedStock.FantasyName})
+
+	stockController := stocks.NewController(ServiceMock{})
+	router := interfaces.GetRouter(stockController)
+
+	responseRecord := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPut, "/stock/1", bytes.NewReader(requestBody))
+
+	router.ServeHTTP(responseRecord, req)
+
+	if expectedStatusCode != responseRecord.Code {
+		t.Errorf("Expected reponse code %d. Got %d", expectedStatusCode, responseRecord.Code)
+	}
+
+	if string(expectedResponseBody) != responseRecord.Body.String() {
+		t.Errorf("Expected body with %s. Got %s", string(expectedResponseBody), responseRecord.Body.String())
+	}
+}
+
+func TestReplaceById_invalidStockId_404AndNotFoundMessage(t *testing.T) {
+	expectedStatusCode := http.StatusNotFound
+	expectedResponseBody := []byte("not found")
+
+	requestBodyStock := stocks.Entity{ID: 1, Code: "biru", FantasyName: "liru"}
+	requestBody, _ := json.Marshal(stocks.DTO{Code: requestBodyStock.Code, FantasyName: requestBodyStock.FantasyName})
+
+	stockController := stocks.NewController(ServiceMock{})
+	router := interfaces.GetRouter(stockController)
+
+	responseRecord := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/stock/2", bytes.NewReader(requestBody))
 
 	router.ServeHTTP(responseRecord, req)
 

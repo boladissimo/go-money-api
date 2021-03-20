@@ -16,6 +16,7 @@ type Controller interface {
 	GetById(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
+	Replace(w http.ResponseWriter, r *http.Request)
 }
 
 //NewController return a new stock controller stance //TODO: make it singleton
@@ -74,6 +75,25 @@ func (c controller) Delete(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "not found")
 	} else {
 		w.WriteHeader(http.StatusNoContent)
+	}
+}
+
+func (c controller) Replace(w http.ResponseWriter, r *http.Request) {
+	id := getMuxVarId(r)
+	var dto DTO
+	err := json.NewDecoder(r.Body).Decode(&dto)
+	if err != nil {
+		util.LogError(err)
+	}
+
+	entity, err := c.service.Replace(id, dto)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "not found")
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(entity)
 	}
 }
 

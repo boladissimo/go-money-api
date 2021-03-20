@@ -46,13 +46,13 @@ services:
     networks:
       - development-network
       
-  redis:
-    container_name: go-money-redis
-    image: 'bitnami/redis:6.0'
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-    - 6379:6379
+  # redis:
+  #   container_name: go-money-redis
+  #   image: 'bitnami/redis:6.0'
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #   ports:
+  #   - 6379:6379
 
 networks:
   development-network:
