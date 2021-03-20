@@ -1,0 +1,59 @@
+version: '3.3'
+services:
+  api:
+    container_name: go-money-api
+    build: 
+      context: ../
+      dockerfile: deployments/Dockerfile
+    environment: 
+      - CLEARDB_DATABASE_URL=mysql://money:pass123@db:3306/money
+      - MIGRATIONS_PATH=/scripts/migrations/
+      - PORT=8084
+    ports:
+      - 8084:8084
+    networks:
+      - development-network
+    depends_on:
+      - db
+
+  db:
+    container_name: go-money-db
+    image: mysql:8.0.21
+    volumes:
+      - ../volume:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: money
+      MYSQL_USER: money
+      MYSQL_PASSWORD: pass123
+    networks:
+      - development-network
+
+  db-ui:
+    container_name: go-money-db-ui
+    image: adminer:4.8.0
+    restart: always
+    links:
+      - db:db
+    ports:
+      - 81:8080
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - development-network
+      
+  # redis:
+  #   container_name: go-money-redis
+  #   image: 'bitnami/redis:6.0'
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #   ports:
+  #   - 6379:6379
+
+networks:
+  development-network:
+    driver: bridge
